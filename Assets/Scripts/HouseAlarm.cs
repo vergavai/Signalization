@@ -12,7 +12,7 @@ public class HouseAlarm : MonoBehaviour
         if (other.TryGetComponent(out Burglar burglar))
         {
             Debug.Log("Burglar entered");
-            StartCoroutine(PlayAndIncrease());
+            StartCoroutine(ChangeSound(true));
         }
     }
 
@@ -20,35 +20,34 @@ public class HouseAlarm : MonoBehaviour
     {
         if (other.TryGetComponent(out Burglar burglar))
         {
-            StartCoroutine(StopAndDecrease());
+            StartCoroutine(ChangeSound(false));
         }
     }
 
-    private IEnumerator PlayAndIncrease()
+    private IEnumerator ChangeSound(bool isIncrease)
     {
-        _audioSource.Play();
+        if (isIncrease)
+        {
+            _audioSource.Play();
+        }
+
+        float current = isIncrease ? 0 : 1;
+        float target = isIncrease ? 1 : 0;
         
         float currentTime = 0;
         while (currentTime < _volumeChangeDuration)
         {
             currentTime += Time.deltaTime;
-            _audioSource.volume = Mathf.MoveTowards(0, 1, currentTime / _volumeChangeDuration);
+            _audioSource.volume = Mathf.MoveTowards(current, target, currentTime / _volumeChangeDuration);
             yield return null;
+        }
+
+        if (!isIncrease)
+        {
+            _audioSource.Stop();
         }
     }
     
-    private IEnumerator StopAndDecrease()
-    {
-        float currentTime = 0;
-        while (currentTime < _volumeChangeDuration)
-        {
-            currentTime += Time.deltaTime;
-            _audioSource.volume = Mathf.MoveTowards(1, 0, currentTime / _volumeChangeDuration);
-            yield return null;
-        }
-        
-        _audioSource.Stop();
-    }
     
     
 }
