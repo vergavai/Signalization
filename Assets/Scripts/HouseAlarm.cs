@@ -18,7 +18,7 @@ public class HouseAlarm : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent(out Burglar burglar))
+        if (other.TryGetComponent(out Burglar _))
         {
             StartCoroutine(ChangeSound(false));
         }
